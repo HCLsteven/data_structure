@@ -13,7 +13,7 @@ int main() {
     char** names = (char**)malloc(n * sizeof(char*));
     for (int i = 0; i < n; i++) {
         names[i] = (char*)malloc((m + 1) * sizeof(char)); // +1 for '\0'
-        cout << "Enter name #" << i + 1 << ": ";
+        cout << "輸入姓名 #" << i + 1 << ": ";
         cin.getline(names[i], m + 1);
     }
 

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstring>   // strlen
+#include <cstring>   // strlen, strchr, strcpy
 #include <cstdlib>   // malloc, free
 using namespace std;
 
@@ -7,39 +7,50 @@ int main() {
     int n;
     cout << "請輸入學生人數: ";
     cin >> n;
-    cin.ignore();  // 忽略掉 cin >> 後的 '\n'
+    cin.ignore();  // 忽略掉 cin >> 留下的 '\n'
 
-    // 先輸入所有姓名，並同時計算最長長度
+    // 使用 malloc 配置一維指標陣列
     char** names = (char**)malloc(n * sizeof(char*));
-    int maxLen = 0;
+    int maxFirstLen = 0;
 
     for (int i = 0; i < n; i++) {
-        char buffer[200];   // 暫存輸入，假設名字不會超過 200
+        char buffer[200];   // 暫存輸入
         cout << "請輸入學生姓名 #" << i + 1 << ": ";
         cin.getline(buffer, 200);
 
-        int len = strlen(buffer);
-        if (len > maxLen) {
-            maxLen = len;  // 更新最長長度
+        // 配置剛好需要的記憶體
+        names[i] = (char*)malloc((strlen(buffer) + 1) * sizeof(char));
+        strcpy(names[i], buffer);
+
+        // 找到空格 → 分隔名字與姓氏
+        char* space = strchr(names[i], ' ');
+        int firstLen = 0;
+        if (space != nullptr) {
+            firstLen = space - names[i];
+        } else {
+            firstLen = strlen(names[i]);
         }
 
-        names[i] = (char*)malloc((len + 1) * sizeof(char)); // 剛好配置足夠空間
-        strcpy(names[i], buffer);
+        if (firstLen > maxFirstLen) {
+            maxFirstLen = firstLen;
+        }
     }
 
-    // 輸出置中對齊結果
+    // 輸出結果：根據左邊最長長度補空格
     cout << "\n對齊後輸出:\n";
     for (int i = 0; i < n; i++) {
-        int len = strlen(names[i]);
-        int leftPadding = (maxLen - len) / 2;
-        int rightPadding = maxLen - len - leftPadding;
+        char* space = strchr(names[i], ' ');
+        int firstLen = 0;
+        if (space != nullptr) {
+            firstLen = space - names[i];
+        } else {
+            firstLen = strlen(names[i]);
+        }
 
-        // 輸出左邊空格
-        for (int j = 0; j < leftPadding; j++) cout << " ";
-        cout << names[i];
-        // 輸出右邊空格
-        for (int j = 0; j < rightPadding; j++) cout << " ";
-        cout << endl;
+        int padding = maxFirstLen - firstLen;
+
+        for (int j = 0; j < padding; j++) cout << " ";
+        cout << names[i] << endl;
     }
 
     // 釋放記憶體

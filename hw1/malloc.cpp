@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
     int n, m;
-    cout << "Enter number of students and max name length: ";
+    cout << "請輸入學生人數和最大姓名長度: ";
     cin >> n >> m;
     cin.ignore();  // 忽略 cin >> 後的 '\n'
 
@@ -41,7 +41,7 @@ int main() {
     }
 
     // 輸出排序後結果
-    cout << "\nSorted names by last character:\n";
+    cout << "\n排列後:\n";
     for (int i = 0; i < n; i++) {
         cout << ptr_array[i] << endl;
     }

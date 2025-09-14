@@ -1,51 +1,62 @@
 #include <iostream>
-#include <cstring>   // strlen
+#include <cstring>  // strlen, strchr, strncpy
 using namespace std;
 
 int main() {
     int n;
     cout << "請輸入學生人數: ";
     cin >> n;
-    cin.ignore();  // 忽略掉 cin >> 留下的 '\n'
+    cin.ignore();
 
-    // 先輸入所有姓名，並同時計算最長長度
-    char** names = new char*[n];
-    int maxLen = 0;
+    // 使用一維陣列儲存指標
+    char* names[100];  // 最多 100 人
+    int maxFirstLen = 0;
 
     for (int i = 0; i < n; i++) {
-        char buffer[200];   // 暫存輸入，假設名字不會超過 200
+        char buffer[200];
         cout << "請輸入學生姓名 #" << i + 1 << ": ";
         cin.getline(buffer, 200);
 
-        int len = strlen(buffer);
-        if (len > maxLen) {
-            maxLen = len;  // 更新最長長度
+        // 配置記憶體存放姓名
+        names[i] = new char[strlen(buffer) + 1];
+        strcpy(names[i], buffer);
+
+        // 找到空格 → 分隔名字與姓氏
+        char* space = strchr(names[i], ' ');
+        int firstLen = 0;
+        if (space != nullptr) {
+            firstLen = space - names[i];  // 計算左邊長度
+        } else {
+            firstLen = strlen(names[i]);  // 沒有姓氏時，整個字串算左邊
         }
 
-        names[i] = new char[len + 1]; // 剛好配置足夠空間
-        strcpy(names[i], buffer);
+        if (firstLen > maxFirstLen) {
+            maxFirstLen = firstLen;
+        }
     }
 
-    // 輸出置中對齊結果
+    // 輸出結果，左邊補空格
     cout << "\n對齊後輸出:\n";
     for (int i = 0; i < n; i++) {
-        int len = strlen(names[i]);
-        int leftPadding = (maxLen - len) / 2;
-        int rightPadding = maxLen - len - leftPadding;
+        char* space = strchr(names[i], ' ');
+        int firstLen = 0;
+        if (space != nullptr) {
+            firstLen = space - names[i];
+        } else {
+            firstLen = strlen(names[i]);
+        }
 
-        // 輸出左邊空格
-        for (int j = 0; j < leftPadding; j++) cout << " ";
-        cout << names[i];
-        // 輸出右邊空格
-        for (int j = 0; j < rightPadding; j++) cout << " ";
-        cout << endl;
+        int padding = maxFirstLen - firstLen;
+
+        // 輸出左邊部分
+        for (int j = 0; j < padding; j++) cout << " ";
+        cout << names[i] << endl;
     }
 
     // 釋放記憶體
     for (int i = 0; i < n; i++) {
         delete[] names[i];
     }
-    delete[] names;
 
     return 0;
 }

@@ -9,14 +9,18 @@ private:
 
 public:
     // 建構子
-    CppArray(int s = 5) : defaultSize(s), value(nullptr) {
+    CppArray(int s = 5){
+        defaultSize = s;
+        value = nullptr;
         if (defaultSize < 0) throw invalid_argument("size must be non-negative");
         value = (defaultSize > 0) ? new float[defaultSize] : nullptr;
         for (int i = 0; i < defaultSize; ++i) value[i] = 0.0f;
     }
 
     // 複製建構子（深拷貝）
-    CppArray(const CppArray& other) : defaultSize(other.defaultSize), value(nullptr) {
+    CppArray(const CppArray& other){
+        defaultSize = other.defaultSize;
+        value = nullptr; 
         value = (defaultSize > 0) ? new float[defaultSize] : nullptr;
         for (int i = 0; i < defaultSize; ++i) value[i] = other.value[i];
     }

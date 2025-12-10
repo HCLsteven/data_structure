@@ -55,7 +55,7 @@ PolyNode* readPoly() {                      //讀入一個多項式
         insertTerm(head, c, e);             //insertTerm 插入空的多項式
     }
 
-    return head;                            //回傳這個多項式的 head
+    return head;                            //回傳這個多項式的 head指標
 }
 
 
@@ -71,6 +71,27 @@ void printPoly(PolyNode* head) {    //print出多項式
     cout << endl;                   //跳出while loop後換行
 }
 
+PolyNode* polyMultiply(PolyNode* aHead, PolyNode* bHead) {  //乘法 傳進來的是a/b的head的node指標
+    PolyNode* cHead = createEmptyPoly();                    //create一個空的多項式cHead (c)
+    for (PolyNode* pa = aHead->link; pa != aHead; pa = pa->link) {      //宣告一個指標pa指向a的第一個實際節點
+        for (PolyNode* pb = bHead->link; pb != bHead; pb = pb->link) {  //當指標不指向head時繼續 ; 指向至下一個
+            double c = pa->coef * pb->coef;                 //係數相乘
+            int    e = pa->exp + pb->exp;                   //指數相加
+            insertTerm(cHead, c, e);                        //插入c多項式
+        }
+    }
+    return cHead;                                           //回傳c的head指標
+}
+
+void deletePoly(PolyNode* head) {   //釋放記憶體
+    PolyNode* p = head->link;       //
+    while (p != head) {
+        PolyNode* tmp = p;
+        p = p->link;
+        delete tmp;
+    }
+    delete head;
+}
 
 int main()
 {
@@ -87,5 +108,6 @@ int main()
     printPoly(b);
 
     // 這裡暫時先不刪記憶體，等等加 delete 函式再一起整理
+    //還有乘法 和 刪除 函式
     return 0;
 }

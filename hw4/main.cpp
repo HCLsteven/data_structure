@@ -1,5 +1,7 @@
 #include <iostream>
 
+using namespace std;
+
 struct PolyNode {   //節點
     double coef;    //係數
     int exp;        //指數
@@ -7,15 +9,83 @@ struct PolyNode {   //節點
 };
 
 PolyNode* createEmptyPoly() {   //create一個空的多項式
-    PolyNode* head = new PolyNode;
+    PolyNode* head = new PolyNode; //head 是一個指標，指向一個 PolyNode 物件
     head -> coef = 0;    //係數是0
-    head -> exp = -1;    //多項式從0~n次方
+    head -> exp = -1;    //head 不是實際的多項式項 多項式0~n次方
     head -> link = head; //空的多項式節點所以指回自己
     return head;         //回傳這個headnode
+}   
+
+void insertTerm(PolyNode* head, double coef, int exp) {     //insert時需要head指標 係數 指數
+    if (coef == 0.0) return;                //如果係數是0就不用插入了
+    PolyNode* prev = head;                  //將head設為previous
+    PolyNode* curr = head->link;            //將head指向的下一個設為current 
+    while (curr != head && curr->exp > exp) {   //當current不是head 且 current指向的指數大於正要插入的指數  
+        prev = curr;                        //將previous跳到下一個變成current
+        curr = curr->link;                  //而current變成原本current的下一個
+    }
+    if (curr != head && curr->exp == exp) { //如果current不是head 且 current指向的指數等於正要插入的指數
+        curr->coef += coef;                 //current指向的係數和正要插入的係數相加
+        if (curr->coef == 0.0) {            //如果current的係數等於0        
+            prev->link = curr->link;        //讓上一個的link指向下一個
+            delete curr;                    //把現在這個係數等於0的刪掉
+        }
+    } else {                                //如果沒有這個指數
+        PolyNode* node = new PolyNode;      //新增一個node插入
+        node->coef = coef;                  //讓他指向的係數等於要插入的係數
+        node->exp  = exp;                   //指數等於要插入的指數
+        node->link = curr;                  //讓node的link指向current
+        prev->link = node;                  //讓previous的link指向node
+    }
+}
+
+PolyNode* readPoly() {                      //讀入一個多項式
+    int terms;                              //項數
+    cout << "請輸入多項式的項數: ";         
+    cin >> terms;                           //輸入項數
+
+    PolyNode* head = createEmptyPoly();     //先建立一個空的多項式
+
+    cout << "請依序輸入每一項的「係數 指數」(例如: 5 2 表示 5x^2)\n";
+    for (int i = 0; i < terms; i++) {       //當i<terms時 (例如terms=2 i=0 1 執行兩次)
+        double c;                           //係數
+        int e;                              //指數
+        cout << "第 " << i + 1 << " 項 (係數 指數): ";
+        cin >> c >> e;                      //輸入係數 指數
+        insertTerm(head, c, e);             //insertTerm 插入空的多項式
+    }
+
+    return head;                            //回傳這個多項式的 head
+}
+
+
+void printPoly(PolyNode* head) {    //print出多項式
+    PolyNode* p = head->link;       //node指標p指向第一項
+    bool first = true;              // 宣告布林變數並賦值true(1)
+    while (p != head) {             //當p不是指向head時
+        if (!first) cout << " + ";  //如果不是第一個就輸出 +
+        cout << p->coef << "x^" << p->exp;  //輸出 p指向的係數 "x^" p指向的指數
+        first = false;              //不是第一個了 first變false(0)
+        p = p->link;                //指向下一個
+    }
+    cout << endl;                   //跳出while loop後換行
 }
 
 
 int main()
 {
+    cout << "請輸入多項式 a:\n";
+    PolyNode* a = readPoly();       //呼叫讀入多項式
 
+    cout << "請輸入多項式 b:\n";
+    PolyNode* b = readPoly();
+
+    cout << "\n你輸入的多項式 a 為: ";
+    printPoly(a);                   //print出讀入的多項式
+
+    cout << "你輸入的多項式 b 為: ";
+    printPoly(b);
+
+    // 這裡暫時先不刪記憶體，等等加 delete 函式再一起整理
+    return 0;
 }

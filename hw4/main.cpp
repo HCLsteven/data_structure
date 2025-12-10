@@ -133,10 +133,10 @@ int main() {
     //實驗=================================================================
     srand(time(0));    // 讓 nondense() 變成真正的亂數
 
-    int nList[] = {10, 100, 1000};
-    int N = sizeof(nList) / sizeof(nList[0]);
+    int nList[] = {10, 100, 1000};  // b 
+    int N = sizeof(nList) / sizeof(nList[0]);   //三個所以做三次
 
-    const int TRIALS = 3;  // 每組做 5 次取平均
+    const int TRIALS = 3;  // 每組做 3 次取平均
 
     cout << "n,dense_ms,nondense_ms\n";
 
@@ -146,22 +146,22 @@ int main() {
         // ===== dense =====
         PolyNode* a = dense(100);   // a 固定 100 項
         PolyNode* b = dense(n);     // b = n 項
-        double totalDense = 0.0;
-        for(int t=0;t<TRIALS;t++){  //
+        double totalDense = 0.0;    //設定dense總花費時間
+        for(int t=0;t<TRIALS;t++){  //每組做 3 次取平均
             clock_t start = clock();
-            PolyNode* c = polyMultiply(a,b);
+            PolyNode* c = polyMultiply(a,b); //ab相乘
             clock_t end = clock();
-            totalDense += double(end - start) / CLOCKS_PER_SEC;
+            totalDense += double(end - start) / CLOCKS_PER_SEC;     //所有 TRIALS次的總秒數 = 這次的秒數 + 之前加起來的
             deletePoly(c);
         }
         deletePoly(a);
         deletePoly(b);
-        double avgDenseMs = (totalDense / TRIALS) * 1000.0;
+        double avgDenseMs = (totalDense / TRIALS) * 1000.0;     //dense一次乘法的平均秒數
 
         // ===== nondense =====
         a = nondense(100);
         b = nondense(n);
-        double totalNondense = 0.0;
+        double totalNondense = 0.0; //設定nondense總花費時間
         for(int t=0;t<TRIALS;t++){
             clock_t start = clock();
             PolyNode* c = polyMultiply(a,b);
@@ -173,7 +173,7 @@ int main() {
         deletePoly(a);
         deletePoly(b);
 
-        double avgNondenseMs = (totalNondense / TRIALS) * 1000.0;
+        double avgNondenseMs = (totalNondense / TRIALS) * 1000.0; //nondense一次乘法的平均秒數
 
         // ===== 輸出實驗結果 =====
         cout << n << "," << avgDenseMs << "," << avgNondenseMs << "\n";

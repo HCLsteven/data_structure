@@ -1,5 +1,6 @@
 #include <iostream>
-
+#include <ctime>
+#include <cstdlib> // rand(), srand()
 using namespace std;
 
 struct PolyNode {   //節點
@@ -93,6 +94,24 @@ void deletePoly(PolyNode* head) {   //釋放記憶體
     delete head;                    
 }
 
+PolyNode* dense(int n){             //生成dense多項式
+    PolyNode* head = createEmptyPoly();
+    for(int i = 0; i < n; i++){
+        insertTerm(head, 1.0, i);   //插入dense多項式
+    }
+    return head;
+}
+
+PolyNode* nondense(int n){          //生成nondense多項式
+    PolyNode* head = createEmptyPoly();
+    for(int i = 0; i < n; i++){
+        int exp = rand() % 100000;  //隨機生成指數
+        insertTerm(head, 1.0, exp); //插入nondense多項式
+    }
+    return head;
+}
+
+
 int main() {
     cout << "輸入多項式 a:\n";
     PolyNode* a = readPoly();       //呼叫讀入多項式
@@ -111,6 +130,53 @@ int main() {
     deletePoly(a);  //釋放記憶體
     deletePoly(b);
     deletePoly(c);
+    //實驗=================================================================
+    srand(time(0));    // 讓 nondense() 變成真正的亂數
 
+    int nList[] = {10, 100, 1000};
+    int N = sizeof(nList) / sizeof(nList[0]);
+
+    const int TRIALS = 3;  // 每組做 5 次取平均
+
+    cout << "n,dense_ms,nondense_ms\n";
+
+    for(int i=0;i<N;i++){
+        int n = nList[i];
+
+        // ===== dense =====
+        PolyNode* a = dense(100);   // a 固定 100 項
+        PolyNode* b = dense(n);     // b = n 項
+        double totalDense = 0.0;
+        for(int t=0;t<TRIALS;t++){  //
+            clock_t start = clock();
+            PolyNode* c = polyMultiply(a,b);
+            clock_t end = clock();
+            totalDense += double(end - start) / CLOCKS_PER_SEC;
+            deletePoly(c);
+        }
+        deletePoly(a);
+        deletePoly(b);
+        double avgDenseMs = (totalDense / TRIALS) * 1000.0;
+
+        // ===== nondense =====
+        a = nondense(100);
+        b = nondense(n);
+        double totalNondense = 0.0;
+        for(int t=0;t<TRIALS;t++){
+            clock_t start = clock();
+            PolyNode* c = polyMultiply(a,b);
+            clock_t end = clock();
+            totalNondense += double(end - start) / CLOCKS_PER_SEC;
+            deletePoly(c);
+        }
+
+        deletePoly(a);
+        deletePoly(b);
+
+        double avgNondenseMs = (totalNondense / TRIALS) * 1000.0;
+
+        // ===== 輸出實驗結果 =====
+        cout << n << "," << avgDenseMs << "," << avgNondenseMs << "\n";
+    }
     return 0;
 }

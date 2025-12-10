@@ -84,30 +84,33 @@ PolyNode* polyMultiply(PolyNode* aHead, PolyNode* bHead) {  //乘法 傳進來�
 }
 
 void deletePoly(PolyNode* head) {   //釋放記憶體
-    PolyNode* p = head->link;       //
-    while (p != head) {
-        PolyNode* tmp = p;
-        p = p->link;
-        delete tmp;
+    PolyNode* p = head->link;       //p指向第一項
+    while (p != head) {             //當p不是指向head時
+        PolyNode* tmp = p;          //因為p等一下要指向下一個節點 需要一個tmp來指向目前要刪掉的節點
+        p = p->link;                //p指向下一個節點
+        delete tmp;                 //刪掉tmp指向的節點
     }
-    delete head;
+    delete head;                    
 }
 
-int main()
-{
-    cout << "請輸入多項式 a:\n";
+int main() {
+    cout << "輸入多項式 a:\n";
     PolyNode* a = readPoly();       //呼叫讀入多項式
 
-    cout << "請輸入多項式 b:\n";
+    cout << "輸入多項式 b:\n";
     PolyNode* b = readPoly();
 
-    cout << "\n你輸入的多項式 a 為: ";
-    printPoly(a);                   //print出讀入的多項式
+    cout << "a = "; printPoly(a);   //print出讀入的多項式
+    cout << "b = "; printPoly(b);
 
-    cout << "你輸入的多項式 b 為: ";
-    printPoly(b);
+    PolyNode* c = polyMultiply(a, b);   //乘法
 
-    // 這裡暫時先不刪記憶體，等等加 delete 函式再一起整理
-    //還有乘法 和 刪除 函式
+    cout << "c = a * b = ";
+    printPoly(c);
+
+    deletePoly(a);  //釋放記憶體
+    deletePoly(b);
+    deletePoly(c);
+
     return 0;
 }

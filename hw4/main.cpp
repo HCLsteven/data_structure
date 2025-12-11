@@ -133,7 +133,7 @@ int main() {
     //實驗=================================================================
     srand(time(0));    // 讓 nondense() 變成真正的亂數
 
-    int nList[] = {10, 100, 1000};  // b 
+    int nList[] = {10, 100, 1000, 2000};  // b 
     int N = sizeof(nList) / sizeof(nList[0]);   //三個所以做三次
 
     const int TRIALS = 3;  // 每組做 3 次取平均
